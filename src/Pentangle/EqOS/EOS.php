@@ -161,8 +161,8 @@ class EOS {
 		//check to make sure 'valid' equation
 		$this->checkInfix($infix);
 		$pf = array();
-		$ops = new Pentangle\EqOS\Stack();
-		$vars = new Pentangle\EqOS\Stack();
+		$ops = new Stack();
+		$vars = new Stack();
 
 		// remove all white-space
 		$infix = preg_replace("/\s/", "", $infix);
@@ -345,8 +345,8 @@ class EOS {
 		//Check to make sure a 'valid' expression
 		$this->checkInfix($infix);
 
-		$ops = new Pentangle\EqOS\Stack();
-		$vars = new Pentangle\EqOS\Stack();
+		$ops = new Stack();
+		$vars = new Stack();
 
 		//remove all white-space
 		$infix = preg_replace("/\s/", "", $infix);
