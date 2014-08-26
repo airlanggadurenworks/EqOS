@@ -676,4 +676,3 @@ class Matrix {
         return $rMatrix;
     }
 }
-?>

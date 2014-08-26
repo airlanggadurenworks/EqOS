@@ -110,5 +110,3 @@ class Stack {
 			return false;
 	}
 }
-
-?>
