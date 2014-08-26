@@ -510,7 +510,7 @@ class EOS {
  * @subpackage EOS
  * @version 2.0
  */
-class eqGraph extends Pentangle\EqOS\EOS {
+class eqGraph extends EOS {
 	private $width;
 	private $height;
 	//GD Image reference
