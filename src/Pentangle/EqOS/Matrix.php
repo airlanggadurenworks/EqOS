@@ -1,9 +1,10 @@
-<?php
+<?php namespace Pentangle\EqOS;
+
 /**
  * matrix.class.php
  *
  * Will set up the defines for error checking as well as provide
- * the LW_Matrix class for include.  As this is made to be modular,
+ * the Matrix class for include.  As this is made to be modular,
  * only the class (and possibly helper classes) along with their
  * defines will be found in this file.
  * @package Math
@@ -17,40 +18,40 @@
 /**
  * Invalid String input type
  */
-define('LW_MATRIX_E_INVALID_INPUT', 5001);
+define('Matrix_E_INVALID_INPUT', 5001);
 
 /**
  * Matrix needed to be a square matrix for the operation
  */
-define('LW_MATRIX_E_NOT_SQUARE', 5002);
+define('Matrix_E_NOT_SQUARE', 5002);
 
 /**
  * Matrix was undefined
  */
-define('LW_MATRIX_E_NO_MATRIX', 5003);
+define('Matrix_E_NO_MATRIX', 5003);
 /**
  * Matrix had varying column lengths
  */
-define('LW_MATRIX_E_INVALID_MATRIX', 5004);
+define('Matrix_E_INVALID_MATRIX', 5004);
 
 /**
  * Matrix operation required rows/cols to be even, they were not
  */
-define('LW_MATRIX_E_NOT_EQUAL', 5005);
+define('Matrix_E_NOT_EQUAL', 5005);
 
 /**
  * Determinate was '0' while preforming another operation
  */
-define('LW_MATRIX_E_NO_INVERSE', 5006);
+define('Matrix_E_NO_INVERSE', 5006);
 
 /**
- * LW_Matrix Class
- * 
+ * Matrix Class
+ *
  * This class will allow you to create and use Matrices
- * as well as providing common Matrix operations.  It 
+ * as well as providing common Matrix operations.  It
  * uses PHP5 for OOP and Error Throwing and is commented
  * for the PHPDoc Parser for documentation creation.
- * 
+ *
  * @version $Id: matrix.class.php 10 2012-08-06 23:41:36Z jlawrence11 $
  * @author Jon Lawrence <JLawrence11@gmail.com>
  * @license http://opensource.org/licenses/LGPL-2.1 LGPL 2.1 License
@@ -58,15 +59,15 @@ define('LW_MATRIX_E_NO_INVERSE', 5006);
  * @package Math
  * @subpackage Matrix
  */
-class LW_Matrix {
+class Matrix {
     private $matrix;
-    
+
     /**
      * Construct method
-     * 
+     *
      * For format of input string, see the see tag below
      *
-     *@see LW_Matrix::_assign()
+     *@see Matrix::_assign()
      * @param String $mText Matrix text input
      */
     public function __construct($mText="")
@@ -74,7 +75,7 @@ class LW_Matrix {
         if($mText)
             $this->_assign($mText);
     }
-    
+
     /**
      * Create a matrix based on string input similar to the TI Calculators
      * input string "[1,2,3;4,5,6;7,8,9]" is the equivalent of the matrix:
@@ -92,14 +93,14 @@ class LW_Matrix {
     {
         if(trim($mText)=="")
             return false;
-        
+
         $mText = preg_replace("/\s/", "", $mText);
         if(!preg_match("/^\[(([\-]*[0-9\. ]+[,]{0,1})+[;]{0,1})*\]$/", $mText)) {
-            throw new Exception("'{$mText}' is not a valid input", LW_MATRIX_E_INVALID_INPUT);
+            throw new Exception("'{$mText}' is not a valid input", Matrix_E_INVALID_INPUT);
             return false;
         }
         $mText = preg_replace("/(\[|\])/", "", $mText);
-        
+
         $rows = explode(";", $mText);
         $i=0;$j=0;
         foreach($rows as $row)
@@ -113,10 +114,10 @@ class LW_Matrix {
             $i++;
             $j = 0;
         }
-        
+
         return $this->_verify();
     }
-    
+
     /**
      * Private function that will verify all the columns have the same
      * number of items, ensuring it is a valid matrix
@@ -125,12 +126,12 @@ class LW_Matrix {
      * @param array $mArray
      * @return Boolean True if it passes, false if not a valid matrix
      */
-    
+
     private function _verify($mArray = false)
     {
         if(!$mArray) $mArray = $this->matrix;
         $nSet = false;
-        
+
         if(is_array($mArray))
         {
             foreach($mArray as $row)
@@ -146,18 +147,18 @@ class LW_Matrix {
         } else {
             return false;
         }
-        
+
         return true;
     }
-    
+
     /**
      * Is it a valid matrix?
-     * 
+     *
      * Public function to tell the class user whether or not the passed
      * array is valid, if no array is passed, it will tell the user whether
      * the matrix of the current instance is valid. Valid is denoted by all
      * rows have the same number of columns.
-     * 
+     *
      * @param Array $mArray Array to be used, if not assigned will default to $this->matrix
      * @return Boolean True/False depending on if array is a valid matrix
      */
@@ -166,10 +167,10 @@ class LW_Matrix {
         if(!$mArray) $mArray = $this->matrix;
         return $this->_verify($mArray);
     }
-    
+
     /**
      * Is it a square Matrix?
-     * 
+     *
      * Will determine whether or not the matrix is valid, and if it
      * is, will determine if the matrix is a square matrix (n by n).
      *
@@ -186,10 +187,10 @@ class LW_Matrix {
         $cols = count($mArray[0]);
         return ($rows == $cols);
     }
-    
+
     /**
      * Get 'n' from a square (n by n) Matrix
-     * 
+     *
      * Will check to see if a matrix is square, if so, will return 'n', which
      * is the number of rows==columns in the matrix
      *
@@ -200,16 +201,16 @@ class LW_Matrix {
     public function _getN($mArray=false)
     {
         if(!$mArray) $mArray = $this->matrix;
-        
+
         if($this->isSquare($mArray)) {
             return count($mArray);
         } else {
             $m = $this->toString($mArray);
-            throw new Exception("'{$m}' is not a square matrix", LW_MATRIX_E_NOT_SQUARE);
+            throw new Exception("'{$m}' is not a square matrix", Matrix_E_NOT_SQUARE);
             return false;
         }
     }
-    
+
     /**
      * Create an Identity Matrix
      *
@@ -218,7 +219,7 @@ class LW_Matrix {
      * @link http://en.wikipedia.org/wiki/Identity_matrix
      * @param Integer $n The rows/cols of identity matrix
      * @param Boolean $useInternal If true will set $this->matrix
-     * @return LW_Matrix|Boolean Return an identity matrix if $useInternal is false, otherwise 'true'
+     * @return Matrix|Boolean Return an identity matrix if $useInternal is false, otherwise 'true'
      */
     public function createIdentity($n, $useInternal = true)
     {
@@ -236,18 +237,18 @@ class LW_Matrix {
             $this->matrix = $mArray;
             return true;
         } else {
-            $nMatrix = new LW_Matrix($this->toString($mArray));
+            $nMatrix = new Pentangle\EqOS\Matrix($this->toString($mArray));
             return $nMatrix;
         }
-        
+
     }
-    
+
     /**
      * Convert current Matrix to string format
-     * 
+     *
      * Convert an array to the string format used by this class.
-     * 
-     * @see LW_Matrix::_assign()
+     *
+     * @see Matrix::_assign()
      * @param Array $mArray if not assigned will use this instance's matrix.
      * @return String The array broken down in to string format
      * @throws Exception If matrix is not an array
@@ -265,24 +266,24 @@ class LW_Matrix {
             $retString = sprintf("[%s]", implode($rows, ";"));
             return $retString;
         } else {
-            throw new Exception("No matrix to convert", LW_MATRIX_E_NO_MATRIX);
+            throw new Exception("No matrix to convert", Matrix_E_NO_MATRIX);
             return false;
         }
     }
-    
+
     /**
      * Overload PHP's class __toString() method
-     * 
+     *
      * PHP magic method for "echoing" this object without a specific method called
-     * Will use {@link LW_Matrix::toString()} with no parameters for it's return.
-     * 
+     * Will use {@link Matrix::toString()} with no parameters for it's return.
+     *
      * @return String Returns the $matrix value in string format
      */
     public function __toString()
     {
         return $this->toString();
     }
-    
+
     /**
      * Get Matrix Array
      *
@@ -294,10 +295,10 @@ class LW_Matrix {
     {
         return $this->matrix;
     }
-    
+
     /**
      * Formatted Matrix output for use in console
-     * 
+     *
      * Will output the matrix in 'pretty' format, if used with 'echo' and
      * HTML, surround it by the '<<pre>>' and '<</pre>>' tags to display properly
      *
@@ -309,12 +310,12 @@ class LW_Matrix {
     {
         if(!$mArray) $mArray = $this->matrix;
         if(!$this->_verify($mArray)) return false;
-        
+
         $out = "";
         $aCount = count($mArray[0]);
         $space = floor(($width-4)/$aCount);
         $space_2 = floor($space/2);
-        
+
         foreach($mArray as $row)
         {
             $out .= sprintf("| %{$space_2}.2f", $row[0]);
@@ -324,26 +325,26 @@ class LW_Matrix {
             }
             $out .= sprintf("%{$space_2}s |\n", " ");
         }
-        
+
         return $out;
     }
-    
+
     /**
      * Adds two matrices together
-     * 
+     *
      * Will add the inputted Matrix to the current instance, and return
-     * the result as LW_Matrix class.
+     * the result as Matrix class.
      *
      * @link http://en.wikipedia.org/wiki/Matrix_addition
-     * @param LW_Matrix $nMatrix Matrix class to be added to current instance
-     * @return LW_Matrix The result of the addition
+     * @param Matrix $nMatrix Matrix class to be added to current instance
+     * @return Matrix The result of the addition
      * @throws Exception $msg of exception explains problem
      */
-    public function addMatrix(LW_Matrix $nMatrix)
+    public function addMatrix(Matrix $nMatrix)
     {
         if(!$this->_verify() || !$nMatrix->_verify())
         {
-            throw new Exception("Matrices have varying column sizes", LW_MATRIX_E_INVALID_MATRIX);
+            throw new Exception("Matrices have varying column sizes", Matrix_E_INVALID_MATRIX);
             return false;
         }
         $matrix1 = $this->getArray();
@@ -352,36 +353,36 @@ class LW_Matrix {
         {
             $m1 = $this->toString($matrix1);
             $m2 = $this->toString($matrix2);
-            throw new Exception("The rows and/or columns '{$m1}' and '{$m2}' are not the same", LW_MATRIX_E_NOT_EQUAL);
+            throw new Exception("The rows and/or columns '{$m1}' and '{$m2}' are not the same", Matrix_E_NOT_EQUAL);
             return false;
         }
-        
+
         $rArray = array();
         for($row=0;$row<count($matrix1);$row++) {
             for($col=0;$col<count($matrix1[0]);$col++) {
                 $rArray[$row][$col] = $matrix1[$row][$col] + $matrix2[$row][$col];
             }
         }
-        $rMatrix = new LW_Matrix($this->toString($rArray));
+        $rMatrix = new Pentangle\EqOS\Matrix($this->toString($rArray));
         return $rMatrix;
     }
-    
+
     /**
      * Subtract Matrices
-     * 
+     *
      * Will subtract the inputted Matrix from the current instance, and return
-     * the result as LW_Matrix class.
+     * the result as Matrix class.
      *
      * @link http://en.wikipedia.org/wiki/Matrix_subtraction
-     * @param LW_Matrix $nMatrix Matrix class to be subtracted from current instance
-     * @return LW_Matrix The result of the subtraction
+     * @param Matrix $nMatrix Matrix class to be subtracted from current instance
+     * @return Matrix The result of the subtraction
      * @throws Exception $msg of exception explains problem
      */
-    public function subMatrix(LW_Matrix $nMatrix)
+    public function subMatrix(Matrix $nMatrix)
     {
         if(!$this->_verify() || !$nMatrix->_verify())
         {
-            throw new Exception("Matrices have varying column sizes", LW_MATRIX_E_INVALID_MATRIX);
+            throw new Exception("Matrices have varying column sizes", Matrix_E_INVALID_MATRIX);
             return false;
         }
         $matrix1 = $this->getArray();
@@ -390,28 +391,28 @@ class LW_Matrix {
         {
             $m1 = $this->toString($matrix1);
             $m2 = $this->toString($matrix2);
-            throw new Exception("The rows and/or columns '{$m1}' and '{$m2}' are not the same", LW_MATRIX_E_NOT_EQUAL);
+            throw new Exception("The rows and/or columns '{$m1}' and '{$m2}' are not the same", Matrix_E_NOT_EQUAL);
             return false;
         }
-        
+
         $rArray = array();
         for($row=0;$row<count($matrix1);$row++) {
             for($col=0;$col<count($matrix1[0]);$col++) {
                 $rArray[$row][$col] = $matrix1[$row][$col] - $matrix2[$row][$col];
             }
         }
-        $rMatrix = new LW_Matrix($this->toString($rArray));
+        $rMatrix = new Pentangle\EqOS\Matrix($this->toString($rArray));
         return $rMatrix;
     }
-    
+
     /**
      * Multiply current matrix by a scalar value
-     * 
+     *
      * Multiplies a matrix by a scalar value (int/float/etc) (constant, ie '2')
      *
      * @link http://en.wikipedia.org/wiki/Scalar_multiplication
      * @param Float $k The value to multiply the matrix by
-     * @return LW_Matrix Returns a new Matrix instance with the result
+     * @return Matrix Returns a new Pentangle\EqOS\Matrix instance with the result
      * @throws Exception if the instance matrix is not valid
      */
     public function mpScalar($k)
@@ -419,7 +420,7 @@ class LW_Matrix {
         //we'll verify a true matrix to ... help the user
         if(!$this->_verify()) {
             $m = $this->toString;
-            throw new Exception("Matrix '{$m}' has varying column sizes", LW_MATRIX_E_INVALID_MATRIX);
+            throw new Exception("Matrix '{$m}' has varying column sizes", Matrix_E_INVALID_MATRIX);
             return false;
         }
         $cArray = $this->getArray();
@@ -431,13 +432,13 @@ class LW_Matrix {
                 $rArray[$i][$j] = $cArray[$i][$j] * $k;
             }
         }
-        $rMatrix = new LW_Matrix($this->toString($rArray));
+        $rMatrix = new Pentangle\EqOS\Matrix($this->toString($rArray));
         return $rMatrix;
     }
-    
+
     /**
      * Get the Matrix Determinant
-     * 
+     *
      * Finds the determinant of the square matrix, user should not use
      * the parameter, as that is meant to allow recursive calling
      * of this function from within itself.
@@ -453,12 +454,12 @@ class LW_Matrix {
         //print_r($mArray);
         if(!$this->isSquare($mArray)) {
             $m = $this->toString($mArray);
-            throw new Exception("'{$m}' is not a square matrix", LW_MATRIX_E_NOT_SQUARE);
+            throw new Exception("'{$m}' is not a square matrix", Matrix_E_NOT_SQUARE);
             return false;
         }
         $n = $this->_getN($mArray);
         if($n < 1){
-            throw new Exception("1 by 1 Matrix cannot have a determinant", LW_MATRIX_E_NO_MATRIX);
+            throw new Exception("1 by 1 Matrix cannot have a determinant", Matrix_E_NO_MATRIX);
             return 0; // how did it get this far?
         } elseif ($n == 1) {
             $det = $mArray[0][0];
@@ -483,17 +484,17 @@ class LW_Matrix {
         }
         return $det;
     }
-    
+
     /**
      * coFactor Matrix
-     * 
-     * Will return a LW_Matrix of coFactors for the matrix provided, or an array
+     *
+     * Will return a Matrix of coFactors for the matrix provided, or an array
      * of the matrix as is the default.
      *
      * @link http://en.wikipedia.org/wiki/Matrix_cofactors
      * @param Array $cArray A matrix in array format (or $this->matrix by default)
-     * @param Boolean $asArray When set to true, will return an array, when false a LW_Matrix Object
-     * @return LW_Matrix|Array A matrix of coFactors for the array provided (or current matrix)
+     * @param Boolean $asArray When set to true, will return an array, when false a Matrix Object
+     * @return Matrix|Array A matrix of coFactors for the array provided (or current matrix)
      * @throws Exception if the matrix is not square
      */
     public function coFactor($cArray=false,$asArray=true)
@@ -501,13 +502,13 @@ class LW_Matrix {
         if(!$cArray) $cArray = $this->matrix;
         if(!$this->isSquare($cArray)) {
             $m = $this->toString($cArray);
-            throw new Exception("'{$m}' is not a square matrix", LW_MATRIX_E_NOT_SQUARE);
+            throw new Exception("'{$m}' is not a square matrix", Matrix_E_NOT_SQUARE);
             return false;
         }
         $n = $this->_getN($cArray);
         $minor = array();
         $rArray = array();
-        
+
         for($j=0;$j<$n;$j++){
             for($i=0;$i<$n;$i++) {
                 //Form the adjugate
@@ -531,14 +532,14 @@ class LW_Matrix {
             }
         }
         if($asArray==false){
-            $rMatrix = new LW_Matrix($this->toString($rArray));
+            $rMatrix = new Pentangle\EqOS\Matrix($this->toString($rArray));
             return $rMatrix;
         } else {
             return $rArray;
         }
-        
+
     }
-    
+
     /**
      * Will transpose the current matrix or array provided
      *
@@ -546,8 +547,8 @@ class LW_Matrix {
      *
      * @link http://en.wikipedia.org/wiki/Matrix_transpose
      * @param Array $cArray the array to transpose (defaults to $this->matrix)
-     * @param Boolean $asArray whether to return an array or LW_Matrix object
-     * @return Array|LW_Matrix Defaults to returning an array of the transposed matrix
+     * @param Boolean $asArray whether to return an array or Matrix object
+     * @return Array|Matrix Defaults to returning an array of the transposed matrix
      * @throws Exception if the matrix is not square
      */
     public function transpose($cArray=false,$asArray=true)
@@ -555,7 +556,7 @@ class LW_Matrix {
         if(!$cArray) $cArray = $this->matrix;
         if(!$this->isSquare($cArray)) {
             $m = $this->toString($cArray);
-            throw new Exception("'{$m}' is not a square matrix", LW_MATRIX_E_NOT_SQUARE);
+            throw new Exception("'{$m}' is not a square matrix", Matrix_E_NOT_SQUARE);
             return false;
         }
         $n = $this->_getN();
@@ -568,21 +569,21 @@ class LW_Matrix {
         if($asArray==true) {
             return $nArray;
         } else {
-            $nMatrix = new LW_Matrix($this->toString($nArray));
+            $nMatrix = new Pentangle\EqOS\Matrix($this->toString($nArray));
             return $nMatrix;
         }
     }
-    
+
     /**
      * Adjugate Matrix
-     * 
+     *
      * Will return the Adjugate matrix of the array provided
      * or the current matrix instance if not provided.
      *
      * @link http://en.wikipedia.org/wiki/Adjugate_matrix
      * @param Array $cArray Defaults to $this->matrix if not provided
-     * @param Boolean $asArray Whether to return an array or LW_Matrix object
-     * @return Array|LW_Matrix Defaults to return the array of the Adjugate matrix
+     * @param Boolean $asArray Whether to return an array or Matrix object
+     * @return Array|Matrix Defaults to return the array of the Adjugate matrix
      */
     public function adjugate($cArray=false,$asArray=true)
     {
@@ -591,74 +592,74 @@ class LW_Matrix {
         if($asArray==true) {
             return $rArray;
         } else {
-            $rMatrix = new LW_Matrix($this->toString($rArray));
+            $rMatrix = new Pentangle\EqOS\Matrix($this->toString($rArray));
             return $rMatrix;
         }
     }
-    
+
     /**
      * Inverse of current matrix
-     * 
+     *
      * Will give the inverse of the array provided or the current matrix
      * Matrix returned denoted by A^-1
      *
      * @link http://en.wikipedia.org/wiki/Inverse_matrix
      * @param Array $cArray Array to invert (defaults to $this->matrix)
-     * @return LW_Matrix By default returns a new instance of LW_Matrix
+     * @return Matrix By default returns a new instance of Matrix
      * @throws Exception for any number of reasons that would make the inverse not available
      */
     public function inverse ($cArray=false)
     {
         if(!$cArray) $cArray = $this->matrix;
-        
+
         $rArray = array();
         $det = $this->getDeterminant($cArray);
         if($det == 0) {
             $eString = $this->toString($cArray);
-            throw new Exception("Determinant of {$eString} is 0, No Inverse found", LW_MATRIX_E_NO_INVERSE);
+            throw new Exception("Determinant of {$eString} is 0, No Inverse found", Matrix_E_NO_INVERSE);
             return false;
         }
-        
+
         $scalar = 1/$det;
         $adj = $this->adjugate($cArray, false);
         $iMatrix = $adj->mpScalar($scalar);
         return $iMatrix;
     }
-    
+
     /**
      * Multiply Matrices
-     * 
+     *
      * This function will multiply the current matrix with the matrix provided.
      * If current Matrix is denoted by 'A' and the inputted is denoted by 'B',
      * When written, this will return AB.
      *
      * @link http://en.wikipedia.org/wiki/Matrix_multiplication
-     * @param LW_Matrix $bMatrix The matrix to multiply with the current
-     * @return LW_Matrix The result of multiplication.
+     * @param Matrix $bMatrix The matrix to multiply with the current
+     * @return Matrix The result of multiplication.
      * @throws Exception $msg explains why operation failed
      */
-    public function mpMatrix(LW_Matrix $bMatrix)
+    public function mpMatrix(Matrix $bMatrix)
     {
         if(!$this->_verify() || !$bMatrix->_verify()) {
             $eM1 = $this->toString();
             $eM2 = $bMatrix->toString();
-            throw new Exception("Either '{$eM1}' and/or '{$eM2}' is not a valid Matrix", LW_MATRIX_E_INVALID_MATRIX);
+            throw new Exception("Either '{$eM1}' and/or '{$eM2}' is not a valid Matrix", Matrix_E_INVALID_MATRIX);
             return false;
         }
         $aArray = $this->matrix;
         $bArray = $bMatrix->getArray();
-        
+
         //The number of columns in A must match the number of rows in B
         if(count($aArray[0]) != count($bArray)) {
             $mA = $this->toString();
             $mB = $bMatrix->toString();
-            throw new Exception("Columns in '{$mA}' don't match Rows of '{$mB}'", LW_MATRIX_E_NOT_EQUAL);
+            throw new Exception("Columns in '{$mA}' don't match Rows of '{$mB}'", Matrix_E_NOT_EQUAL);
             return false;
         }
-        
+
         $rArray = array();
         $bRows = count($bArray[0]);
-        
+
         //Loop through rows of Matrix A
         for($i=0;$i<count($aArray);$i++) {
             //Loop through the columns of Matrix B
@@ -671,7 +672,7 @@ class LW_Matrix {
                 $rArray[$i][$j] = $value;
             }
         }
-        $rMatrix = new LW_Matrix($this->toString($rArray));
+        $rMatrix = new Pentangle\EqOS\Matrix($this->toString($rArray));
         return $rMatrix;
     }
 }

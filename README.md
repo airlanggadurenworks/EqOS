@@ -1,3 +1,5 @@
+    Tweaks made to allow the class to be used as a Composer package, beyond that all code is the same as the original.
+
 # Classes
 ---
 

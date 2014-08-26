@@ -1,4 +1,4 @@
-<?php
+<?php namespace Pentangle\EqOS;
 
 /**
  * Basic Stack Class.
@@ -13,7 +13,7 @@
  * @subpackage EOS
  * @version 2.0
  */
-class phpStack {
+class Stack {
 	private $index;
 	private $locArray;
 

@@ -1,0 +1,16 @@
+{
+    "name": "pentangle/eqos",
+    "description": "Do stuff with Maths. Based on https://github.com/jlawrence11/Classes.",
+    "authors": [{
+        "name": "Dan Gates",
+        "email": "dan.gates@pentangle.co.uk"
+    }],
+    "require": {
+        "php": ">=5.4.0"
+    },
+        "psr-0": {
+            "Pentangle\\EqOS": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}

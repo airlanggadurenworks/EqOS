@@ -1,7 +1,8 @@
-<?php
+<?php namespace Pentangle\EqOS;
+
 /**
  * Equation Operating System Classes.
- * 
+ *
  * This class was created for the safe parsing of mathematical equations
  * in PHP.  There is a need for a way to successfully parse equations
  * in PHP that do NOT require the use of `eval`.  `eval` at its core
@@ -14,7 +15,7 @@
  * 2014/08
  * - Added scientific notation support
  * - Added basic factorial support
- * 
+ *
  * 2013/06 UPDATE:
  * - Added 'abs' (absolute value) support per tjbaron's update.
  *
@@ -59,11 +60,6 @@ define('EQEOS_E_NAN', 5504);
 if(!defined('DEBUG'))
 	define('DEBUG', false);
 
-//We use a stack class so we don't have to keep track of indices for an array
-// May eventually update to use `array_pop()` `end()` and `array_push()` instead
-// of this class.
-require_once "stack.class.php";
-
 
 /**
  * Equation Operating System (EOS) Parser
@@ -73,7 +69,7 @@ require_once "stack.class.php";
  * variables, if the variables are defined (useful for the Graph creation
  * that the second and extended class in this file provides. {@see eqGraph})
  * This class was created for PHP4 in 2005, updated to fully PHP5 in 2013.
- * 
+ *
  * @author Jon Lawrence <jlawrence11@gmail.com>
  * @copyright Copyright �2005-2013, Jon Lawrence
  * @license http://opensource.org/licenses/LGPL-2.1 LGPL 2.1 License
@@ -81,7 +77,7 @@ require_once "stack.class.php";
  * @subpackage EOS
  * @version 2.0
  */
-class eqEOS {
+class EOS {
     /**#@+
      *Private variables
      */
@@ -116,7 +112,7 @@ class eqEOS {
 		$this->inFix = (isset($inFix)) ? $inFix : null;
 		$this->postFix = array();
 	}
-	
+
 	/**
 	 * Check Infix for opening closing pair matches.
 	 *
@@ -161,12 +157,12 @@ class eqEOS {
 	public function in2post($infix = null) {
 		// if an equation was not passed, use the one that was passed in the constructor
 		$infix = (isset($infix)) ? $infix : $this->inFix;
-		
+
 		//check to make sure 'valid' equation
 		$this->checkInfix($infix);
 		$pf = array();
-		$ops = new phpStack();
-		$vars = new phpStack();
+		$ops = new Pentangle\EqOS\Stack();
+		$vars = new Pentangle\EqOS\Stack();
 
 		// remove all white-space
 		$infix = preg_replace("/\s/", "", $infix);
@@ -181,7 +177,7 @@ class eqEOS {
 		for($i=0;$i<strlen($infix);$i++) {
 			// pull out 1 character from the string
 			$chr = substr($infix, $i, 1);
-			
+
 			// if the character is numerical
 			if(preg_match('/[0-9.]/i', $chr)) {
 				// if the previous character was not a '-' or a number
@@ -235,7 +231,7 @@ class eqEOS {
 				if((in_array($lChar, array_merge($this->ST1, $this->ST2, $this->ST, $this->SEP['open'])) || $lChar=="") && $chr=="-") {
 					// increase the index because there is no reason that it shouldn't..
 					$pfIndex++;
-					$pf[$pfIndex] = $chr; 
+					$pf[$pfIndex] = $chr;
 				}
 				// Otherwise it will function like a normal operator
 				else {
@@ -254,7 +250,7 @@ class eqEOS {
 
 		// re-index the array at 0
 		$pf = array_values($pf);
-		
+
 		// set the private variable for later use if needed
 		$this->postFix = $pf;
 
@@ -264,7 +260,7 @@ class eqEOS {
 
 	/**
 	 * Solve Postfix (RPN)
-	 * 
+	 *
 	 * This function will solve a RPN array. Default action is to solve
 	 * the RPN array stored in the class from eqEOS::in2post(), can take
 	 * an array input to solve as well, though default action is prefered.
@@ -276,19 +272,19 @@ class eqEOS {
 	public function solvePF($pfArray = null) {
 		// if no RPN array is passed - use the one stored in the private var
 		$pf = (!is_array($pfArray)) ? $this->postFix : $pfArray;
-		
+
 		// create our temporary function variables
 		$temp = array();
 		$tot = 0;
 		$hold = 0;
 
-		// Loop through each number/operator 
+		// Loop through each number/operator
 		for($i=0;$i<count($pf); $i++) {
 			// If the string isn't an operator, add it to the temp var as a holding place
 			if(!in_array($pf[$i], array_merge($this->ST, $this->ST1, $this->ST2))) {
 				$temp[$hold++] = $pf[$i];
 			}
-			// ...Otherwise perform the operator on the last two numbers 
+			// ...Otherwise perform the operator on the last two numbers
 			else {
 				switch ($pf[$i]) {
 					case '+':
@@ -322,11 +318,11 @@ class eqEOS {
 						$temp[$hold-2] = bcmod($temp[$hold-2], $temp[$hold-1]);
 						break;
 				}
-				// Decrease the hold var to one above where the last number is 
+				// Decrease the hold var to one above where the last number is
 				$hold = $hold-1;
 			}
 		}
-		// return the last number in the array 
+		// return the last number in the array
 		return $temp[$hold-1];
 
 	} //end function solvePF
@@ -349,8 +345,8 @@ class eqEOS {
 		//Check to make sure a 'valid' expression
 		$this->checkInfix($infix);
 
-		$ops = new phpStack();
-		$vars = new phpStack();
+		$ops = new Pentangle\EqOS\Stack();
+		$vars = new Pentangle\EqOS\Stack();
 
 		//remove all white-space
 		$infix = preg_replace("/\s/", "", $infix);
@@ -380,7 +376,7 @@ class eqEOS {
 				$back = "*";
 			else
 				$back = "";
-			
+
 			//Make sure that the variable does have a replacement
             //First check for pi and e variables that wll automagically be replaced
             if(in_array(strtolower($match[2]), array('pi', 'e'))) {
@@ -399,8 +395,8 @@ class eqEOS {
 		if(DEBUG)
 			fwrite($hand, "$infix\n");
 
-		// Finds all the 'functions' within the equation and calculates them 
-		// NOTE - when using function, only 1 set of paranthesis will be found, instead use brackets for sets within functions!! 
+		// Finds all the 'functions' within the equation and calculates them
+		// NOTE - when using function, only 1 set of paranthesis will be found, instead use brackets for sets within functions!!
 		while((preg_match("/(". implode("|", $this->FNC) . ")\(([^\)\(]*(\([^\)]*\)[^\(\)]*)*[^\)\(]*)\)/", $infix, $match)) != 0) {
 			$func = $this->solveIF($match[2]);
 			switch($match[1]) {
@@ -468,13 +464,13 @@ class eqEOS {
 
 
 	} //end function solveIF
-    
+
     /**
 	 * Solvwe factorial (!)
 	 *
 	 * Will take an integer and solve for it's factorial. Eg.
      * `5!` will become `1*2*3*4*5` = `120`
-     * TODO: 
+     * TODO:
      *    Solve for non-integer factorials
 	 *
 	 * @param Integer $num Number to get factorial of
@@ -488,7 +484,7 @@ class eqEOS {
         if(intval($num) != $num) {
             throw new Exception("Factorial Error: {$num} is not an integer", EQEOS_E_NAN);
         }
-        
+
         $tot = 1;
         for($i=1;$i<=$num;$i++) {
             $tot *= $i;
@@ -498,8 +494,8 @@ class eqEOS {
 } //end class 'eqEOS'
 
 
-// fun class that requires the GD libraries to give visual output to the user 
-/* extends the eqEOS class so that it doesn't need to create it as a private var 
+// fun class that requires the GD libraries to give visual output to the user
+/* extends the eqEOS class so that it doesn't need to create it as a private var
     - and it extends the functionality of that class */
 /**
  * Equation Graph
@@ -564,7 +560,7 @@ class eqGraph extends eqEOS {
 		//$xStep = ($xStep > .01) ? $xStep : 0.01;
 		if($xLow > $xHigh)
 			list($xLow, $xHigh) = array($xHigh, $xLow);	//swap function
-		
+
 		$xScale = $this->width/($xHigh-$xLow);
 		$counter = 0;
 		if(DEBUG) {
@@ -581,23 +577,23 @@ class eqGraph extends eqEOS {
 				fwrite($hand, $tmp1);
 			}
 
-			// If developer asked us to find the upper and lower bounds for y... 
+			// If developer asked us to find the upper and lower bounds for y...
 			if($yGuess==true) {
 				$yLow = ($yLow===false || ($y<$yLow)) ? $y : $yLow;
 				$yHigh = ($yHigh===false || $y>$yHigh) ? $y : $yHigh;
 			}
 			$xVars[$counter] = $y;
-			$counter++;			
+			$counter++;
 		}
 		if(DEBUG)
 			fclose($hand);
-		// add 0.01 to each side so that if y is from 1 to 5, the lines at 1 and 5 are seen 
+		// add 0.01 to each side so that if y is from 1 to 5, the lines at 1 and 5 are seen
 		$yLow-=0.01;$yHigh+=0.01;
 
 		//Now that we have all the variables stored...find the yScale
 		$yScale = $this->height/(($yHigh)-($yLow));
 
-		// if developer wanted a grid on the graph, add it now 
+		// if developer wanted a grid on the graph, add it now
 		if($xyGrid==true) {
 			for($i=ceil($yLow);$i<=floor($yHigh);$i++) {
 				$i0 = abs($yHigh-$i);
@@ -608,7 +604,7 @@ class eqGraph extends eqEOS {
 				ImageLine($img, $i0*$xScale, 0, $i0*$xScale, $this->height, $grey);
 			}
 		}
-		
+
 		//Now that we have the scales, let's see if we can draw an x/y-axis
 		if($xLow <= 0 && $xHigh >= 0) {
 			//the y-axis is within our range - draw it.
@@ -636,8 +632,8 @@ class eqGraph extends eqEOS {
 			$y1 = (($xVars[$counter-1]<$yLow) || ($xVars[$counter-1] > $yHigh)) ? -1 : (abs($yHigh - $xVars[$counter-1]))*$yScale;
 			$x2 = (abs($xLow - $i))*$xScale;
 			$y2 = (($xVars[$counter]<$yLow) || ($xVars[$counter] > $yHigh)) ? -1 : (abs($yHigh - $xVars[$counter]))*$yScale;
-			
-			// if any of the y values were found to be off of the y-bounds, don't graph those connecting lines 
+
+			// if any of the y values were found to be off of the y-bounds, don't graph those connecting lines
 			if($y1!=-1 && $y2!=-1)
 				ImageLine($img, $x1, $y1, $x2, $y2, $black);
 			$counter++;
@@ -664,7 +660,7 @@ class eqGraph extends eqEOS {
 		header("Content-type: image/png");
 		ImagePng($this->image);
 	}
-	
+
 	/**
 	 * Output GD Image
 	 *
@@ -676,7 +672,7 @@ class eqGraph extends eqEOS {
 	public function getImage() {
 		return $this->image;
 	}
-	
+
 	/**
 	 * Output GD Image
 	 *
