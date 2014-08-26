@@ -1,7 +1,21 @@
-    Tweaks made to allow the class to be used as a Composer package, beyond that all code is the same as the original.
+Tweaks made to allow the class to be used as a Composer package, beyond that all code is the same as the original so full credit to [https://github.com/jlawrence11/Classes](https://github.com/jlawrence11/Classes).
 
 # Classes
----
+## Composer Usage
+1. Add the repository to your `composer.json` file:
+```json
+"repositories": [{
+    "type": "vcs",
+    "url":  "git@github.com:Pentangle/EqOS.git"
+}]
+```
+2. Add the dependency:
+```json
+"require": {
+    "pentangle/eqos": "dev-master"
+}
+```
+3. `composer update` and you're done.
 
 ## eos.class.php
 
@@ -21,11 +35,11 @@ also typically include the full equation used.
 
 #### eqEOS
 
-This class has one important function, `eqEOS::solveIF()` which does all the legwork,
+This class has one important function, `Pentangle\EqOS\eqEOS::solveIF()` which does all the legwork,
 so we'll start there and end with examples.  
 To initialize this class, use:
 
-    $eos = new eqEOS();
+    $eos = new Pentangle\EqOS\eqEOS();
 
 ##### solveIF($infix, $variables)
 
@@ -82,11 +96,11 @@ Given the equation:
 
 If this is called by:
 
-    eqEOS::solveIF('5$x^$y', 2)
+    Pentangle\EqOS\eqEOS::solveIF('5$x^$y', 2)
 
 It will equal '20', as every variable is replaced by 2.  However, if called like:
 
-    eqEOS::solveIF('5$x^$y', array(
+    Pentangle\EqOS\eqEOS::solveIF('5$x^$y', array(
                                 'x' => 2,
                                 'y' => 3);
 
