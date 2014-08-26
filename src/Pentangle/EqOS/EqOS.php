@@ -77,7 +77,7 @@ if(!defined('DEBUG'))
  * @subpackage EOS
  * @version 2.0
  */
-class EOS {
+class EqOS {
     /**#@+
      *Private variables
      */
