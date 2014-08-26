@@ -2,20 +2,22 @@ Tweaks made to allow the class to be used as a Composer package, beyond that all
 
 # Classes
 ## Composer Usage
-1. Add the repository to your `composer.json` file:
+Add the repository to your `composer.json` file:
 ```json
 "repositories": [{
     "type": "vcs",
     "url":  "git@github.com:Pentangle/EqOS.git"
 }]
 ```
-2. Add the dependency:
+
+Add the dependency:
 ```json
 "require": {
     "pentangle/eqos": "dev-master"
 }
 ```
-3. `composer update` and you're done.
+
+`$ composer update` and you're done.
 
 ## eos.class.php
 
