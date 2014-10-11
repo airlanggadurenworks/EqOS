@@ -124,7 +124,7 @@ class EOS {
 	 * @throws Exception if malformed.
 	 * @return Bool true if passes - throws an exception if not.
 	 */
-	private function checkInfix($infix) {
+	protected function checkInfix($infix) {
 		if(trim($infix) == "") {
 			throw new Exception("No Equation given", EQEOS_E_NO_EQ);
 			return false;
