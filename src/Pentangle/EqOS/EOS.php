@@ -1,5 +1,7 @@
 <?php namespace Pentangle\EqOS;
 
+use \Exception;
+
 /**
  * Equation Operating System Classes.
  *
